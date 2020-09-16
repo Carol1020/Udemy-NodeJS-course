@@ -9,3 +9,5 @@ const greenMsg = chalk.red.bold('Error!')
 
 console.log(chalk.green('success!'))
 console.log(greenMsg)
+
+console.log(process.argv[2])
