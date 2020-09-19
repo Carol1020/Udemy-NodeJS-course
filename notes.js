@@ -1,4 +1,6 @@
-fs = require('fs')
+fs = require('fs');
+const chalk = require('chalk');
+
 
 const getNotes = function () {
     return "Your notes..."
@@ -6,13 +8,12 @@ const getNotes = function () {
 
 const addNote = function (title, body) {
     const notes = loadNotes()
-
-    // if title appears before
+    
     const duplicateNotes = notes.filter(function (note) {
         return note.title === title
     })
 
-    // if it's not duplicated, add new title & body
+    // if title is not duplicated, create a new note
     if (duplicateNotes.length === 0) {
         notes.push({
             title: title,
@@ -25,7 +26,7 @@ const addNote = function (title, body) {
     }
 }
 
-const saveNotes = function(notes) {
+const saveNotes = function (notes) {
     const dataJSON = JSON.stringify(notes)
     fs.writeFileSync('notes.json', dataJSON)
 }
@@ -33,7 +34,7 @@ const saveNotes = function(notes) {
 const loadNotes = function () {
     try {
         const dataBuffer = fs.readFileSync('notes.json')
-        const dataJSON = dataBuffter.toString()
+        const dataJSON = dataBuffer.toString()
         return JSON.parse(dataJSON)
     } catch (e) {
         return []
@@ -41,7 +42,29 @@ const loadNotes = function () {
 
 }
 
+// 1.2
+const removeNote = function (title) {
+    // 1.4
+    // console.log(title)
+    // 2.1 this step is just reading data from the file, so no argument
+    const notes = loadNotes()
+    // 2.2
+    const notesToKeep = notes.filter(function (note) {
+        // when title from the file !== title to be deleted, it will be returned (kept)
+        return note.title !== title
+    })
+    // the note is removed, so notesToKeep become less.
+    if (notes.length > notesToKeep.length) {
+        console.log(chalk.bgGreen('Note removed!'));
+    } else {
+        console.log(chalk.bgRed('No note found!'));
+    }
+    // 2.3 save all titles that need to be kept
+    saveNotes(notesToKeep);
+}
+
 module.exports = {
     getNotes: getNotes,
-    addNote: addNote
+    addNote: addNote,
+    removeNote: removeNote
 }
